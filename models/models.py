@@ -17,9 +17,9 @@ class TeamOwner(models.Model):
 class Matchup(models.Model):
     week = models.IntegerField()
     winner = models.BooleanField(help_text='1 for home team, 0 for away team')
-    home_team = models.ForeignKey('Team', on_delete=models.CASCADE)
+    home_team = models.ForeignKey('Team', on_delete=models.CASCADE, related_name='+')
     home_score = models.FloatField()
-    away_team = models.ForeignKey('Team', on_delete=models.CASCADE)
+    away_team = models.ForeignKey('Team', on_delete=models.CASCADE, related_name='+')
     away_score = models.FloatField()
 
     def winning_team(self):
