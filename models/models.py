@@ -1,28 +1,68 @@
 from django.db import models
 
+'''
+A user will select a workout.  That workout will include:
+    * - A name for the workout
+    * - A set of exercises
+    * - Number of repetitions per set
+    * - Weight per set (lbs or kgs)
+    * - An order in which to do the sets
+'''
 
-class Team(models.Model):
-    team_id = models.IntegerField(primary_key=True)
-    team_location = models.CharField(max_length=32, null=True)
-    team_nickname = models.CharField(max_length=32, null=True)
-    team_abbrv = models.CharField(max_length=8, null=True)
+'''
+An exercise has the following:
+    * - A name for the exercise
+    * - A method (equipment) of performing the exercise
+
+I kinda want to change this so I could be like barbell.<exercise>
+Feel like that'd be easier to  cope with. 
+So a set would be barbell.exercise("bench press"), which would return
+I guess a primary muscle group I'd be working
+Vs something like dumbell.exercise("bench press")
+'''
+
+class Exercise(models.Model):
+    name = models.CharField(max_length=32, null=True)
+    muscles_worked = models.OneToManyField(
+        'MuscleGroup', 
+        on_delete=models.CASCADE
+        )
+
+    primary_muscle = models.OneToOneField(
+        "Muscle",
+        on_delete=models.CASCADE
+        )
+
+    secondary_muscle = models.OneToOneField(
+        "Muscle",
+        on_delete=models.CASCADE
+        )
+    
+     def __str__(self):
+        return self.name
 
 
-class TeamOwner(models.Model):
-    team = models.OneToOneField('Team', on_delete=models.CASCADE)
-    fname = models.CharField(max_length=32, null=True)
-    lname = models.CharField(max_length=32, null=True)
+class Equipment(models.Model):
+    name = models.CharField(Max_length=32, null=True)
+    method = models.OneToOneField(
+        "Exercise",
+         on_delete=models.CASCADE
+         )
+     
+     def __str__(self):
+        return self.name
+
+class MuscleGroup(models.Model):
+    name = models.CharField(Max_length=32, null=True)
+    group = models.OneToManyField('Muscle', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
 
-class Matchup(models.Model):
-    week = models.IntegerField()
-    winner = models.BooleanField(help_text='1 for home team, 0 for away team')
-    home_team = models.ForeignKey('Team', on_delete=models.CASCADE, related_name='+')
-    home_score = models.FloatField()
-    away_team = models.ForeignKey('Team', on_delete=models.CASCADE, related_name='+')
-    away_score = models.FloatField()
+class Muscle(models.Model):
+    name = models.CharField(max_length=32, null=True)
 
-    def winning_team(self):
-        if self.winner:
-            return self.home_team
-        return self.away_team
+     def __str__(self):
+        return self.name
+    
