@@ -26,11 +26,11 @@ class Workout(models.Model):
 
 class Set(models.Model):
     reps = models.IntegerField(default=5)
-    workout = models.ForeignKey('Workout', on_delete=models.PROTECT)
+    workout = models.ForeignKey('Workout', on_delete=models.CASCADE)
 
 class Exercise(models.Model):
     name = models.CharField(max_length=32, null=True)
-    set_owner = models.ForeignKey('Set', on_delete=models.PROTECT)
+    set_owner = models.ForeignKey('Set', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
