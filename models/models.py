@@ -21,48 +21,30 @@ I guess a primary muscle group I'd be working
 Vs something like dumbell.exercise("bench press")
 '''
 
+class Workout(models.Model):
+    name = models.CharField(max_length=32, null=True)
+
+class Set(models.Model):
+    reps = models.IntegerField(default=5)
+    workout = models.ForeignKey(Workout, on_delete=models.PROTECT)
+
 class Exercise(models.Model):
     name = models.CharField(max_length=32, null=True)
-    muscles_worked = models.OneToManyField(
-        'MuscleGroup', 
-        on_delete=models.CASCADE
-        )
-
-    primary_muscle = models.OneToOneField(
-        "Muscle",
-        on_delete=models.CASCADE
-        )
-
-    secondary_muscle = models.OneToOneField(
-        "Muscle",
-        on_delete=models.CASCADE
-        )
-    
-     def __str__(self):
-        return self.name
-
-
-class Equipment(models.Model):
-    name = models.CharField(Max_length=32, null=True)
-    method = models.OneToOneField(
-        "Exercise",
-         on_delete=models.CASCADE
-         )
-     
-     def __str__(self):
-        return self.name
-
-class MuscleGroup(models.Model):
-    name = models.CharField(Max_length=32, null=True)
-    group = models.OneToManyField('Muscle', on_delete=models.CASCADE)
-
+    set_owner = models.ForeignKey(Set, on_delete=models.PROTECT)
     def __str__(self):
         return self.name
 
+class Equipment(models.Model):
+    name = models.CharField(max_length=32, null=True)
+    method = models.ManyToManyField(Exercise)
+    
+    def __str__(self):
+        return self.name
 
 class Muscle(models.Model):
     name = models.CharField(max_length=32, null=True)
-
-     def __str__(self):
+    exercise = models.ManyToManyField(Exercise)
+    
+    def __str__(self):
         return self.name
     
